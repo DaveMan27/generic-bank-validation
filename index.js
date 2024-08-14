@@ -1,40 +1,107 @@
-let bankCode;    
-let branchNumber;
-let accountNumber;
+let bankDetails = {};
+let response    = {fields : {}};
+
+////////////////////////////////////////////////////////////
+//Call this function from external source - ie. FormAssembly
+////////////////////////////////////////////////////////////
+
+const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
+  $(`#${bankCodeTFA}`).on('change', handleBankCode);		
+	$(`#${branchNumberTFA}`).on('change', handleBranchNumber);		
+	$(`#${accountNumberTFA}`).on('change', handleAccountNumber);
 
 
+	$(`#${bankCodeTFA}, #${branchNumberTFA}, #${accountNumberTFA}`).blur(function() {      
+    // Code to be executed when any of the specified elements lose focus
+  	try{
+			if (!isEmpty(bankDetails.bankCode) && !isEmpty(bankDetails.branchNumber) && !isEmpty(bankDetails.accountNumber)) {                                                                                                                                                                                                                                  
+				response.fields.status = true;
+				response.fields.message = 'All fields have been filled out.'                                                                                                                                                                         
+				const isValid = checkPrimaryAccount(bankDetails.bankCode, bankDetails.branchNumber, bankDetails.accountNumber);
+				console.log(`Bank validation check: ${isValid}`);
+				if (isValid) {
+					response.isValid = isValid;
+					response.bankDetails = bankDetails;
+					response.message = 'Bank details are valid.';
+				} else {
+					response.isValid = isValid;
+					response.bankDetails = bankDetails;
+					response.message = 'Bank details are not valid. Please check and try again.'
+				}
+			} else {
+				response.fields.status = false;
+				response.bankDetails = bankDetails;
+				response.fields.message = 'Make sure to complete all the fields';
+			}
+		} catch (error){		
+			response.message = error.message;
+		}
+		console.log(response);
+  	return response;
+    
+  })
 
-// Arrow function to handle changes in the Branch Number field
-const handleBranchNumberChange = (input) => {
-    branchNumber = String(input.target.value);
 }
 
-// Arrow function to handle changes in the Account Number field
-const handleAccountNumberChange = (input) => {
-    accountNumber = String(input.target.value);
-} 
+/////////////////////////////////////////////////////////////
+//Handles the input of each field
+/////////////////////////////////////////////////////////////
 
-document.getElementById('bankNumber').addEventListener('input', function () {
-    //handleBankNumberChange(this.value);
-    bankCode = getBankCode();
-});
-
-document.getElementById('branchNumber').addEventListener('input', handleBranchNumberChange);
-
-document.getElementById('accountNumber').addEventListener('input', handleAccountNumberChange);
-
-const submitToValidate = () => {
-    const result = checkPrimaryAccount(bankCode, branchNumber, accountNumber);
-    console.log(`Result of bank validation: ${result}`);
+const handleBankCode = (input) => {
+	bankCode = getBankCode(input.target.id);
+	bankDetails.bankCode = bankCode;
 }
 
+const handleBranchNumber = (input) => {
+	bankDetails.branchNumber = String(input.target.value);
+	console.log(bankDetails);
 
-function getBankCode() {
-    const selectElement = document.getElementById('bankNumber');
-    const selectedOption = selectElement.options[selectElement.selectedIndex].text;
-    const bankCode = selectedOption.split(' ')[0];
+}
+
+const handleAccountNumber = (input) => {
+	bankDetails.accountNumber = String(input.target.value);
+	console.log(bankDetails);
+}
+
+///////////////////////////////////////////////////////////////
+// Retrieves the bank code number from selection in dropdown
+///////////////////////////////////////////////////////////////
+
+const getBankCode= (bankCodeTFA) => {    
+		const selectedElement = $("#" + bankCodeTFA + " option:selected").text()
+    const bankCode       = selectedElement.split(' ')[0];
+  	console.log(bankCode);
     return bankCode.length === 1 ? '0' + bankCode : bankCode;
 }
+
+//////////////////////////////////////
+//Check if fields are empty
+/////////////////////////////////////
+
+const isEmpty = (input) => {
+// Check for empty string, null, or undefined
+	if (input === '' || input === null || input === undefined || input === 'נא') {
+    return true;
+  }
+	
+    
+// Convert to a string and trim whitespace to check for inputs that only contain spaces
+  if (String(input).trim() === '') {
+    return true;
+	}
+    
+// Optionally, check if the input is a number and not NaN (Not-a-Number), which is a special value representing an undefined or unrepresentable value in JavaScript
+  if (typeof input === 'number'&& isNaN(input)) {
+    return true;
+  }	
+    
+  return false;  // Input is not empty
+}
+
+
+///////////////////////////////////////////////////////////////
+//Bank validation function
+///////////////////////////////////////////////////////////////
 
 const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
     var lngRequiredAccountLength;
@@ -202,26 +269,17 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
       }
       
       if (bankBranch >= 10 && bankBranch <= 99) {
-                                                                                                                                                                                                                                              // Convert the number to a string and add a leading zero
         bankBranch = '0' + bankBranch;
       }
     }
     else {
        validateBankAccount = false;
-       console.log('Bank details: Account number is not in the correct length');
-    }
-  
-    if (validateBankAccount == true) {
-        console.log('Bank details are valid');
-     
-    } else {
-       console.log('Bank details are invalid');
-    }
-
+    }    
+        
     return validateBankAccount;
 }
 
 const pad = (str, max) => {
     str = str.toString();
     return str.length < max ? pad("0" + str, max): str;
-} 
+}
