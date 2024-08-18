@@ -1,11 +1,11 @@
-let bankDetails = {};
-let response    = {fields : {}};
+/*let bankDetails = {};
+let response    = {fields : {}};*/
 
 ////////////////////////////////////////////////////////////
 //Call this function from external source - ie. FormAssembly
 ////////////////////////////////////////////////////////////
 
-const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
+/*const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
   $(`#${bankCodeTFA}`).on('change', handleBankCode);		
 	$(`#${branchNumberTFA}`).on('change', handleBranchNumber);		
 	$(`#${accountNumberTFA}`).on('change', handleAccountNumber);
@@ -41,13 +41,14 @@ const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
     
   })
 
-}
+}*/
+
 
 /////////////////////////////////////////////////////////////
 //Handles the input of each field
 /////////////////////////////////////////////////////////////
 
-const handleBankCode = (input) => {
+/*const handleBankCode = (input) => {
 	bankCode = getBankCode(input.target.id);
 	bankDetails.bankCode = bankCode;
 }
@@ -61,7 +62,53 @@ const handleBranchNumber = (input) => {
 const handleAccountNumber = (input) => {
 	bankDetails.accountNumber = String(input.target.value);
 	console.log(bankDetails);
+}*/
+
+const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
+  const elements = [bankCodeTFA, branchNumberTFA, accountNumberTFA].map(id => `#${id}`);
+  
+  elements.forEach(selector => $(selector).on('change', handleInputChange));
+  $(elements.join(', ')).blur(validateBankDetails);
 }
+
+const handleInputChange = (event) => {
+  const { id, value } = event.target;
+  if (id.includes('bankCode')) bankDetails.bankCode = getBankCode(id);
+  if (id.includes('branchNumber')) bankDetails.branchNumber = String(value);
+  if (id.includes('accountNumber')) bankDetails.accountNumber = String(value);
+  console.log(bankDetails);
+}
+
+const validateBankDetails = () => {
+  let response = { fields: {} };
+
+  try {
+    const { bankCode, branchNumber, accountNumber } = bankDetails;
+    const isAllFilled = [bankCode, branchNumber, accountNumber].every(field => !isEmpty(field));
+    
+    if (isAllFilled) {
+      const isValid = checkPrimaryAccount(bankCode, branchNumber, accountNumber);
+      response = {
+        isValid,
+        bankDetails,
+        message: isValid ? 'Bank details are valid.' : 'Bank details are not valid. Please check and try again.'
+      };
+    } else {
+      response = {
+        fields: { status: false, message: 'Make sure to complete all the fields' },
+        bankDetails,
+        isValid: false,
+        message: 'Bank details are not valid. Please check and try again.'
+      };
+    }
+  } catch (error) {
+    response.message = error.message;
+  }
+
+  console.log(response);
+  return response;
+}
+
 
 ///////////////////////////////////////////////////////////////
 // Retrieves the bank code number from selection in dropdown
