@@ -1,55 +1,21 @@
-/*let bankDetails = {};
-let response    = {fields : {}};*/
+let bankDetails = {};
 
-////////////////////////////////////////////////////////////
-//Call this function from external source - ie. FormAssembly
-////////////////////////////////////////////////////////////
-
-/*const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
-  $(`#${bankCodeTFA}`).on('change', handleBankCode);		
+const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
+  const elements = [bankCodeTFA, branchNumberTFA, accountNumberTFA].map(id => `#${id}`);
+  
+  $(`#${bankCodeTFA}`).on('change', handleBankCode);
 	$(`#${branchNumberTFA}`).on('change', handleBranchNumber);		
 	$(`#${accountNumberTFA}`).on('change', handleAccountNumber);
+  
+  $(elements.join(', ')).blur(validateBankDetails);
+}
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                /////////////////////////////////////////////////////////////
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                //Handles the input of each field
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                /////////////////////////////////////////////////////////////
 
-	$(`#${bankCodeTFA}, #${branchNumberTFA}, #${accountNumberTFA}`).blur(function() {      
-    // Code to be executed when any of the specified elements lose focus
-  	try{
-			if (!isEmpty(bankDetails.bankCode) && !isEmpty(bankDetails.branchNumber) && !isEmpty(bankDetails.accountNumber)) {                                                                                                                                                                                                                                  
-				response.fields.status = true;
-				response.fields.message = 'All fields have been filled out.'                                                                                                                                                                         
-				const isValid = checkPrimaryAccount(bankDetails.bankCode, bankDetails.branchNumber, bankDetails.accountNumber);
-				console.log(`Bank validation check: ${isValid}`);
-				if (isValid) {
-					response.isValid = isValid;
-					response.bankDetails = bankDetails;
-					response.message = 'Bank details are valid.';
-				} else {
-					response.isValid = isValid;
-					response.bankDetails = bankDetails;
-					response.message = 'Bank details are not valid. Please check and try again.'
-				}
-			} else {
-				response.fields.status = false;
-				response.bankDetails = bankDetails;
-				response.fields.message = 'Make sure to complete all the fields';
-			}
-		} catch (error){		
-			response.message = error.message;
-		}
-		console.log(response);
-  	return response;
-    
-  })
-
-}*/
-
-
-/////////////////////////////////////////////////////////////
-//Handles the input of each field
-/////////////////////////////////////////////////////////////
-
-/*const handleBankCode = (input) => {
-	bankCode = getBankCode(input.target.id);
+const handleBankCode = (input) => {
+	bankCode             = getBankCode(input.target.id);
 	bankDetails.bankCode = bankCode;
 }
 
@@ -62,21 +28,6 @@ const handleBranchNumber = (input) => {
 const handleAccountNumber = (input) => {
 	bankDetails.accountNumber = String(input.target.value);
 	console.log(bankDetails);
-}*/
-
-const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
-  const elements = [bankCodeTFA, branchNumberTFA, accountNumberTFA].map(id => `#${id}`);
-  
-  elements.forEach(selector => $(selector).on('change', handleInputChange));
-  $(elements.join(', ')).blur(validateBankDetails);
-}
-
-const handleInputChange = (event) => {
-  const { id, value } = event.target;
-  if (id.includes('bankCode')) bankDetails.bankCode = getBankCode(id);
-  if (id.includes('branchNumber')) bankDetails.branchNumber = String(value);
-  if (id.includes('accountNumber')) bankDetails.accountNumber = String(value);
-  console.log(bankDetails);
 }
 
 const validateBankDetails = () => {
@@ -84,14 +35,14 @@ const validateBankDetails = () => {
 
   try {
     const { bankCode, branchNumber, accountNumber } = bankDetails;
-    const isAllFilled = [bankCode, branchNumber, accountNumber].every(field => !isEmpty(field));
+    const isAllFilled                               = [bankCode, branchNumber, accountNumber].every(field => !isEmpty(field));
     
     if (isAllFilled) {
-      const isValid = checkPrimaryAccount(bankCode, branchNumber, accountNumber);
-      response = {
+      const isValid  = checkPrimaryAccount(bankCode, branchNumber, accountNumber);
+            response = {
         isValid,
         bankDetails,
-        message: isValid ? 'Bank details are valid.' : 'Bank details are not valid. Please check and try again.'
+        message: isValid ? 'Bank details are valid.': 'Bank details are not valid. Please check and try again.'
       };
     } else {
       response = {
@@ -110,34 +61,34 @@ const validateBankDetails = () => {
 }
 
 
-///////////////////////////////////////////////////////////////
-// Retrieves the bank code number from selection in dropdown
-///////////////////////////////////////////////////////////////
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ///////////////////////////////////////////////////////////////
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              // Retrieves the bank code number from selection in dropdown
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ///////////////////////////////////////////////////////////////
 
 const getBankCode= (bankCodeTFA) => {    
-		const selectedElement = $("#" + bankCodeTFA + " option:selected").text()
-    const bankCode       = selectedElement.split(' ')[0];
+  const selectedElement = $("#" + bankCodeTFA + " option:selected").text()
+  const bankCode        = selectedElement.split(' ')[0];
   	console.log(bankCode);
     return bankCode.length === 1 ? '0' + bankCode : bankCode;
 }
 
-//////////////////////////////////////
-//Check if fields are empty
-/////////////////////////////////////
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //////////////////////////////////////
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Check if fields are empty
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              /////////////////////////////////////
 
 const isEmpty = (input) => {
-// Check for empty string, null, or undefined
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              // Check for empty string, null, or undefined
 	if (input === '' || input === null || input === undefined || input === 'נא') {
     return true;
   }
 	
     
-// Convert to a string and trim whitespace to check for inputs that only contain spaces
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              // Convert to a string and trim whitespace to check for inputs that only contain spaces
   if (String(input).trim() === '') {
     return true;
 	}
     
-// Optionally, check if the input is a number and not NaN (Not-a-Number), which is a special value representing an undefined or unrepresentable value in JavaScript
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              // Optionally, check if the input is a number and not NaN (Not-a-Number), which is a special value representing an undefined or unrepresentable value in JavaScript
   if (typeof input === 'number'&& isNaN(input)) {
     return true;
   }	
@@ -146,9 +97,9 @@ const isEmpty = (input) => {
 }
 
 
-///////////////////////////////////////////////////////////////
-//Bank validation function
-///////////////////////////////////////////////////////////////
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ///////////////////////////////////////////////////////////////
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Bank validation function
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ///////////////////////////////////////////////////////////////
 
 const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
     var lngRequiredAccountLength;
@@ -178,7 +129,7 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
       case '22': 
       case '46': 
       case '14': 
-           lngRequiredAccountLength              = 9;
+           lngRequiredAccountLength        = 9;
         if (bankNumber == '26') bankNumber = '31';
         break;
       default: 
@@ -189,7 +140,7 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
     if (account.length > 9)
       account = account.substr(account.length - 9);
     
-    // check for account number correct length 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  // check for account number correct length 
     if (account.length <= lngRequiredAccountLength)
     {
       accountArray = account.split('');
@@ -201,9 +152,9 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
       bankbranchArray = bankBranch.split('');
 
       switch (bankNumber) {
-         case '18':
-            let branchPlusAccount = parseInt(bankBranch).toString() + account.substring(0, 7);
-            validateBankAccount = 98 - (branchPlusAccount % 97) == parseInt(account.slice(-2));
+         case '18': 
+            let branchPlusAccount   = parseInt(bankBranch).toString() + account.substring(0, 7);
+                validateBankAccount = 98 - (branchPlusAccount % 97) == parseInt(account.slice(-2));
             break;
         case '54': 
           validateBankAccount = true;
