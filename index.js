@@ -1,3 +1,5 @@
+  //TODO Coonect all the bank code numbers to the correct functions
+
 let bankDetails = {};
 
 // Initialization of bank validation
@@ -110,10 +112,12 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
   debugger;
   switch (bankNumber) {
     case '10': 
-    case '13': 
+    case '13':
     case '34': 
       validateBankAccount = validateBank10_13_34(bankBranch, account);
       break;
+    case '23': 
+      validateBankAccount = validateBank23(bankBranch, account)
     case '12': 
       validateBankAccount = validateBank12(bankBranch, account);
       break;
@@ -123,9 +127,8 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
     case '20': 
       validateBankAccount = validateBank20(bankBranch, account);
       break;
-    case '11': 
-    case '17': 
-      validateBankAccount = validateBank11_17(account);
+    case '47': 
+      validateBankAccount = validateBank47(account);
       break;
     case '31': 
     case '52': 
@@ -143,17 +146,20 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
     case '14': 
       validateBankAccount = validateBank14(bankBranch, account);
       break;
-    case '15': 
-      validateBankAccount = validateBank15(account);
+    case '54': 
+      validateBankAccount = validateBank54(account);
       break;
-    case '16': 
-      validateBankAccount = validateBank16(account);
+    case '03': 
+      validateBankAccount = validateBank03(account);
       break;
     case '18': 
       validateBankAccount = validateBank18(bankBranch, account);
       break;
-    case '19': 
-      validateBankAccount = validateBank19(bankBranch, account);
+    case '15': 
+      validateBankAccount = validateBank15(bankBranch, account);
+      break;
+    case '35': 
+      validateBankAccount = validateBank35(bankBranch, account);
       break;
     default: 
       validateBankAccount = false;
@@ -166,13 +172,41 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
 // Bank-specific validation functions
 ///////////////////////////////////////////////////////////////
 
-// Banks 10, 13, 34
+// Banks 10, 13, 34 - Leumi
 const validateBank10_13_34 = (bankBranch, account) => {
   const accountArray = account.split('').map(Number);
   const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
   let num = String(Number(bankbranchArray[0] * 10 + bankbranchArray[1] * 9 + bankbranchArray[2] * 8 + accountArray[0] * 7 + accountArray[1] * 6 + accountArray[2] * 5 + accountArray[3] * 4 + accountArray[4] * 3 + accountArray[5] * 2) + Number(account.substr(account.length - 2)));
   num = num.substr(num.length - 2);
   return ['90', '72', '70', '60', '20'].includes(num);
+}
+
+  //Bank 23 - HSBC
+const validateBank23 = (bankBranch, account) => {
+  if (accountNumber.length !== 9) {
+    return false;
+  }
+
+// Convert the account number to an array of digits
+  const digits = account.split('').map(Number);
+
+  // Validation for branch 101: The 7th digit (index 6) must be 4
+  if (bankBranch === 101) {
+      if (digits[6] !== 4) {
+          return false;
+      }
+  }
+
+// Validation for branch 102: The account number must end with "001"
+  if (bankBranch === 102) {
+      if (!account.endsWith('001')) {
+          return false;
+      }
+  }
+
+// If the branch code is neither 101 nor 102, or all checks passed
+  return true;
+  
 }
 
 // Bank 12
@@ -195,9 +229,9 @@ const validateBank04 = (bankBranch, account) => {
 
 // Bank 20
 const validateBank20 = (bankBranch, account) => {
-  if (bankBranch > 400) {
+  if (bankBranch > 400 && bankBranch < 800) {
     bankBranch = bankBranch - 400;
-  }
+  } 
   const accountArray = account.split('').map(Number);
   const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
   let num = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);
@@ -206,12 +240,12 @@ const validateBank20 = (bankBranch, account) => {
 }
 
 // Banks 11, 17
-const validateBank11_17 = (account) => {
+/*const validateBank11_47 = (account) => {
   const accountArray = account.split('').map(Number);
   let num = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
   num = num % 11;
   return [0, 2, 4].includes(num);
-}
+}*/
 
 // Banks 31, 52
 const validateBank31_52 = (account) => {
@@ -223,7 +257,7 @@ const validateBank31_52 = (account) => {
   return num === 0 || num1 === 0 || num === 6 || num1 === 6;
 }
 
-// Bank 09
+// Bank 09 - Bank HaDoar
 const validateBank09 = (account) => {
   const accountArray = account.split('').map(Number);
   let num = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
@@ -231,7 +265,7 @@ const validateBank09 = (account) => {
   return num === 0;
 }
 
-// Bank 22
+// Bank 22 - Citibank
 const validateBank22 = (account) => {
   const accountArray = account.split('').map(Number);
   let num = Number(accountArray[0] * 3 + accountArray[1] * 2 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2);
@@ -268,21 +302,21 @@ const validateBank14 = (bankBranch, account) => {
   return num === 0 || (num === 2 && validBranches1.includes(bankBranch)) || (num === 4 && validBranches2.includes(bankBranch)) || num1 === 0 || num2 === 0;
 }
 
-// Bank 15
-const validateBank15 = (accountNumber) => {
+// Bank 54 - הבנק ההודי
+const validateBank54 = (accountNumber) => {
   return true; // Assuming all account numbers are valid since no specific logic is provided.
 }
 
-// Bank 16
-const validateBank16 = (accountNumber) => {
+// Bank 03 - בנק אש
+const validateBank03 = (accountNumber) => {
   const digits = accountNumber.split('').map(Number);
   const multipliers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   const sum = digits.reduce((acc, digit, index) => acc + digit * multipliers[index], 0);
   return sum % 11 === 0;
 }
 
-// Bank 17
-const validateBank17 = (accountNumber) => {
+// Bank 47
+const validateBank47 = (accountNumber) => {
   const digits = accountNumber.split('').map(Number);
   const multipliers = [9, 8, 6, 4, 3, 7, 2, 5];
   const sum = digits.reduce((acc, digit, index) => acc + digit * multipliers[index], 0);
@@ -291,17 +325,29 @@ const validateBank17 = (accountNumber) => {
   return digits[digits.length - 1] === checkDigit;
 }
 
-// Bank 18
+// Bank 18 - One Zero
 const validateBank18 = (bankBranch, accountNumber) => {
   const branchPlusAccount = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
   return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));
 }
 
-// Bank 19
-const validateBank19 = (bankBranch, accountNumber) => {
+// Bank 15 - אופק אגודת אשראי
+const validateBank15 = (bankBranch, accountNumber) => {
   const branchPlusAccount = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
   return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));
 }
+
+  // Bank 35
+const validateBank35 = (bankBranch, accountNumber) => {
+  const branchPlusAccount = `${bankBranch}${accountNumber}`;
+    const mod97Result = parseInt(branchPlusAccount, 10) % 97;
+    const checkDigits = 98 - mod97Result;
+    const accountWithCheckDigits = `${checkDigits}${accountNumber}`;
+    const originalCheckDigits = parseInt(accountNumber.slice(-2), 10);
+    return checkDigits === originalCheckDigits; 
+}
+
+
 
 ///////////////////////////////////////////////////////////////
 // Pad function for account numbers
