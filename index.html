@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8" />
+		<meta name    = "viewport" content = "width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<h2>Bank Account Details</h2>
+		<label for = "bankNumber">Bank Number:</label><br />
+		<select
+			aria-required = "true"
+			id            = "bankNumber"
+			name          = "tfa_33"
+			title         = "שם הבנק"
+			class         = "required"
+		>
+			<option value = "">נא לבחור ערך...</option>
+			<option value = "tfa_73" id = "tfa_73" class = "">4 - בנק יהב</option>
+			<option value = "tfa_74" id = "tfa_74" class = "">9 - בנק הדואר</option>
+			<option value = "tfa_75" id = "tfa_75" class = "">10 - בנק לאומי</option>
+			<option value = "tfa_76" id = "tfa_76" class = "">11 - בנק דיסקונט</option>
+			<option value = "tfa_77" id = "tfa_77" class = "">12 - בנק הפועלים</option>
+			<option value = "tfa_78" id = "tfa_78" class = "">13 - בנק איגוד</option>
+			<option value = "tfa_79" id = "tfa_79" class = "">
+				14 - בנק הבינלאומי (לשעבר בנק אוצר החייל)
+			</option>
+			<option value = "tfa_80" id = "tfa_80" class = "">
+				17 - בנק מרכנתיל דיסקונט
+			</option>
+			<option value = "tfa_81" id = "tfa_81" class = "">
+				18 - וואן זירו הבנק הדיגיטלי
+			</option>
+			<option value = "tfa_82" id = "tfa_82" class = "">20 - בנק מזרחי</option>
+			<option value = "tfa_83" id = "tfa_83" class = "">
+				22 - סיטי בנק (Citibank)
+			</option>
+			<option value = "tfa_84" id = "tfa_84" class = "">
+				26 - (UBANK בנק הבינלאומי (לשעבר יובנק
+			</option>
+			<option value = "tfa_85" id = "tfa_85" class = "">31 - בנק הבינלאומי</option>
+			<option value = "tfa_86" id = "tfa_86" class = "">
+				34 - בנק לאומי (לשעבר בנק ערבי ישראלי)
+			</option>
+			<option value = "tfa_87" id = "tfa_87" class = "">
+				39 - סטייט בנק אוף אינדייה (State bank of India)
+			</option>
+			<option value = "tfa_88" id = "tfa_88" class = "">46 - בנק מסד</option>
+			<option value = "tfa_89" id = "tfa_89" class = "">
+				52 - בנק הבינלאומי (לשעבר בנק פאג"י)
+			</option>
+			<option value = "tfa_90" id = "tfa_90" class = "">54 - בנק ירושלים</option>
+			<option value = "tfa_91" id = "tfa_91" class = "">
+				68 - בנק מרכנתיל דיסקונט (לשעבר מוניציפל/דקסיה)
+			</option>
+			<option value = "tfa_92" id = "tfa_92" class = "">
+				84 - בנק האוזינג (Housing Bank)
+			</option>
+			<option value = "tfa_93" id = "tfa_93" class = "">
+				99 - בנק ישראל
+			</option></select
+		><br /><br />
+
+		<label for  = "branchNumber">Branch Number:</label><br />
+		<input type = "text" id = "branchNumber" name = "branchNumber" /><br /><br />
+
+		<label  for     = "accountNumber">Account Number:</label><br />
+		<input  type    = "text" id = "accountNumber" name = "accountNumber" /><br /><br />
+		<button onclick = "submitToValidate()">Submit</button>
+		<script src     = "index.js"></script>
+	</body>
+</html>
