@@ -1,58 +1,69 @@
 let bankDetails = {};
 
-const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
+// Initialization of bank validation
+const initBankValidation = () => {
+  const bankCodeElement = document.getElementById('bankNumber');
+  bankCodeElement.addEventListener('change', handleBankCode);
   
-  $(`#${bankCodeTFA}`).on('change', handleBankCode);
-	$(`#${branchNumberTFA}`).on('change', handleBranchNumber);		
-	$(`#${accountNumberTFA}`).on('change', handleAccountNumber);
-  
+  const branchNumberElement = document.getElementById('branchNumber');
+  branchNumberElement.addEventListener('change', handleBranchNumber);
+
+  const accNumberElement = document.getElementById('accountNumber');
+  accNumberElement.addEventListener('change', handleAccountNumber);
 }
 
-  /////////////////////////////////////////////////////////////
-  //Handles the input of each field
-  /////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+// Handles the input of each field
+///////////////////////////////////////////////////////////////
 
 const handleBankCode = (input) => {
-	bankCode = getBankCode(input.target.id);
+	const bankCodeElement = document.getElementById('bankNumber');
+	const selectedOption = bankCodeElement.options[bankCodeElement.selectedIndex];
+	const innerHTML = selectedOption.innerHTML;
+	let bankCode = innerHTML.split(' ')[0];
+	bankCode = bankCode.length === 1 ? '0' + bankCode : bankCode;
 	bankDetails.bankCode = bankCode;
+	console.log(bankDetails);
 }
 
 const handleBranchNumber = (input) => {
-	bankDetails.branchNumber = String(input.target.value);
+  bankDetails.branchNumber = String(input.target.value);
+  console.log(bankDetails);
 }
 
 const handleAccountNumber = (input) => {
-	bankDetails.accountNumber = String(input.target.value);
+  bankDetails.accountNumber = String(input.target.value);
+  console.log(bankDetails);
 }
 
-   //////////////////////////////////////////////
-    //Checks if inputs are empty
-    //////////////////////////////////////////////
-  
+///////////////////////////////////////////////////////////////
+// Checks if inputs are empty
+///////////////////////////////////////////////////////////////
+
 const isEmpty = (input) => {
-  // Check for empty string, null, or undefined
-    if (input === '' || input === null || input === undefined) {
-      return true;
-    }
-    	
-        
-  // Convert to a string and trim whitespace to check for inputs that only contain spaces
-    if (String(input).trim() === '') {
-      return true;
-    }
-        
-  // Optionally, check if the input is a number and not NaN (Not-a-Number), which is a special value representing an undefined or unrepresentable value in JavaScript
-    if (typeof input === 'number'&& isNaN(input)) {
-      return true;
-    }	
-        
-    return false;  // Input is not empty
-}
+  if (input === '' || input === null || input === undefined) {
+    return true;
+  }
   
+  if (String(input).trim() === '') {
+    return true;
+  }
+  
+  if (typeof input === 'number' && isNaN(input)) {
+    return true;
+  }	
+  
+  return false;  // Input is not empty
+}
+
+///////////////////////////////////////////////////////////////
+// Validates the bank details
+///////////////////////////////////////////////////////////////
 
 const validateBankDetails = () => {
   let response = { fields: {} };
-
+  console.log('hello validate bank details');
+  
   try {
     const { bankCode, branchNumber, accountNumber } = bankDetails;
     const isAllFilled = [bankCode, branchNumber, accountNumber].every(field => !isEmpty(field));
@@ -75,202 +86,234 @@ const validateBankDetails = () => {
   } catch (error) {
     response.message = error.message;
   }
-
+  
+  console.log(response);
   return response;
 }
-
 
 ///////////////////////////////////////////////////////////////
 // Retrieves the bank code number from selection in dropdown
 ///////////////////////////////////////////////////////////////
 
-const getBankCode= (bankCodeTFA) => {    
-		const selectedElement = $("#" + bankCodeTFA + " option:selected").text()
-    const bankCode       = selectedElement.split(' ')[0];
+const getBankCode = (bankCodeTFA) => {    
+	const selectedElement = $("#" + bankCodeTFA + " option:selected").text();
+    const bankCode = selectedElement.split(' ')[0];
     return bankCode.length === 1 ? '0' + bankCode : bankCode;
 }
 
 ///////////////////////////////////////////////////////////////
-//Bank validation function
+// Main function to validate primary account based on bank code
 ///////////////////////////////////////////////////////////////
 
 const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
-    var lngRequiredAccountLength;
-    var accountArray;
-    var bankbranchArray;
-    var validateBankAccount;
-    var num, num1, num2;
-    
-
-    switch (bankNumber) {
-      case '10': 
-      case '13': 
-      case '34': 
-        lngRequiredAccountLength = 8;
-        break;
-      case '12': 
-      case '04': 
-      case '20': 
-        lngRequiredAccountLength = 6;
-        break;
-      case '26': 
-      case '11': 
-      case '17': 
-      case '31': 
-      case '52': 
-      case '09': 
-      case '22': 
-      case '46': 
-      case '14': 
-           lngRequiredAccountLength              = 9;
-        if (bankNumber == '26') bankNumber = '31';
-        break;
-      default: 
-        lngRequiredAccountLength = 9;
-    }
-
-    account = pad(account, lngRequiredAccountLength);
-    if (account.length > 9)
-      account = account.substr(account.length - 9);
-    
-    // check for account number correct length 
-    if (account.length <= lngRequiredAccountLength)
-    {
-      accountArray = account.split('');
-      
-      if (bankNumber == 20 && bankBranch > 400) {
-        bankBranch = bankBranch - 400;
-      }
-      bankBranch      = pad(bankBranch, 3);
-      bankbranchArray = bankBranch.split('');
-
-      switch (bankNumber) {
-         case '18':
-            let branchPlusAccount = parseInt(bankBranch).toString() + account.substring(0, 7);
-            validateBankAccount = 98 - (branchPlusAccount % 97) == parseInt(account.slice(-2));
-            break;
-        case '54': 
-          validateBankAccount = true;
-        case '10': 
-        case '13': 
-        case '34': 
-          num = String(Number(bankbranchArray[0] * 10 + bankbranchArray[1] * 9 + bankbranchArray[2] * 8 + accountArray[0] * 7 + accountArray[1] * 6 + accountArray[2] * 5 + accountArray[3] * 4 + accountArray[4] * 3 + accountArray[5] * 2) + Number(account.substr(account.length - 2)));
-          num = num.substr(num.length - 2);
-          if (num == '90' || num == '72' || num == '70' || num == '60' || num == '20')
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        case '12': 
-          num = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);
-          num = num % 11;
-          if (num == 0 || num == 2 || num == 4 || num == 6)
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        case '04': 
-          num = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);
-          num = num % 11;
-          if (num == 0 || num == 2)
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        case '11': 
-        case '17': 
-          num = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num = num % 11;
-          if (num == 0 || num == 2 || num == 4)
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        case '20': 
-          num = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);
-          num = num % 11;
-          if (num == 0 || num == 2 || num == 4)
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        case '31': 
-        case '52': 
-          num  = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num  = num % 11;
-          num1 = Number(accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num1 = num1 % 11;
-          if (num == 0 || num1 == 0 || num == 6 || num1 == 6)
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        case '09': 
-          num = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num = num % 10;
-          if (num == 0)
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        case '22': 
-          num = Number(accountArray[0] * 3 + accountArray[1] * 2 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2);
-          num = num % 11;
-          if (11 - num == accountArray[8])
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        case '46': 
-          num  = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num  = num % 11;
-          num1 = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num1 = num1 % 11;
-          num2 = Number(accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num2 = num2 % 11;
-          if (num == 0)
-            validateBankAccount = true;
-          else if (num == 2 && (bankBranch == '154' || bankBranch == '166' || bankBranch == '178' || bankBranch == '181' || bankBranch == '183' || bankBranch == '191' || bankBranch == '192' || bankBranch == '503' || bankBranch == '505' || bankBranch == '507' || bankBranch == '515' || bankBranch == '516' || bankBranch == '527' || bankBranch == '539'))
-            validateBankAccount = true;
-          else if (num1 == 0 || num2 == 0)
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        case '14': 
-          num  = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num  = num % 11;
-          num1 = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num1 = num1 % 11;
-          num2 = Number(accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-          num2 = num2 % 11;
-          if (num == 0)
-            validateBankAccount = true;
-          else if (num == 2 && (bankBranch == '347' || bankBranch == '361' || bankBranch == '362' || bankBranch == '363' || bankBranch == '365' || bankBranch == '385'))
-            validateBankAccount = true;
-          else if (num == 4 && (bankBranch == '361' || bankBranch == '362' || bankBranch == '363'))
-            validateBankAccount = true;
-          else if (num1 == 0 || num2 == 0)
-            validateBankAccount = true;
-          else
-            validateBankAccount = false;
-          break;
-        default: 
-          validateBankAccount = false;
-      }
-      
-      if (bankBranch >= 10 && bankBranch <= 99) {
-        bankBranch = '0' + bankBranch;
-      }
-    }
-    else {
-       validateBankAccount = false;
-    }    
-        
-    return validateBankAccount;
+  let validateBankAccount = false;
+  debugger;
+  switch (bankNumber) {
+    case '10': 
+    case '13': 
+    case '34': 
+      validateBankAccount = validateBank10_13_34(bankBranch, account);
+      break;
+    case '12': 
+      validateBankAccount = validateBank12(bankBranch, account);
+      break;
+    case '04': 
+      validateBankAccount = validateBank04(bankBranch, account);
+      break;
+    case '20': 
+      validateBankAccount = validateBank20(bankBranch, account);
+      break;
+    case '11': 
+    case '17': 
+      validateBankAccount = validateBank11_17(account);
+      break;
+    case '31': 
+    case '52': 
+      validateBankAccount = validateBank31_52(account);
+      break;
+    case '09': 
+      validateBankAccount = validateBank09(account);
+      break;
+    case '22': 
+      validateBankAccount = validateBank22(account);
+      break;
+    case '46': 
+      validateBankAccount = validateBank46(bankBranch, account);
+      break;
+    case '14': 
+      validateBankAccount = validateBank14(bankBranch, account);
+      break;
+    case '15': 
+      validateBankAccount = validateBank15(account);
+      break;
+    case '16': 
+      validateBankAccount = validateBank16(account);
+      break;
+    case '18': 
+      validateBankAccount = validateBank18(bankBranch, account);
+      break;
+    case '19': 
+      validateBankAccount = validateBank19(bankBranch, account);
+      break;
+    default: 
+      validateBankAccount = false;
+  }
+  
+  return validateBankAccount;
 }
+
+///////////////////////////////////////////////////////////////
+// Bank-specific validation functions
+///////////////////////////////////////////////////////////////
+
+// Banks 10, 13, 34
+const validateBank10_13_34 = (bankBranch, account) => {
+  const accountArray = account.split('').map(Number);
+  const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
+  let num = String(Number(bankbranchArray[0] * 10 + bankbranchArray[1] * 9 + bankbranchArray[2] * 8 + accountArray[0] * 7 + accountArray[1] * 6 + accountArray[2] * 5 + accountArray[3] * 4 + accountArray[4] * 3 + accountArray[5] * 2) + Number(account.substr(account.length - 2)));
+  num = num.substr(num.length - 2);
+  return ['90', '72', '70', '60', '20'].includes(num);
+}
+
+// Bank 12
+const validateBank12 = (bankBranch, account) => {
+  const accountArray = account.split('').map(Number);
+  const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
+  let num = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);
+  num = num % 11;
+  return [0, 2, 4, 6].includes(num);
+}
+
+// Bank 04
+const validateBank04 = (bankBranch, account) => {
+  const  accountArray      = account.split('').map(Number);
+  const  bankbranchArray   = pad(bankBranch, 3).split('').map(Number);
+  let    num               = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);
+         num               = num % 11;
+  return num             === 0 || num === 2;
+}
+
+// Bank 20
+const validateBank20 = (bankBranch, account) => {
+  if (bankBranch > 400) {
+    bankBranch = bankBranch - 400;
+  }
+  const accountArray = account.split('').map(Number);
+  const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
+  let num = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);
+  num = num % 11;
+  return [0, 2, 4].includes(num);
+}
+
+// Banks 11, 17
+const validateBank11_17 = (account) => {
+  const accountArray = account.split('').map(Number);
+  let num = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  num = num % 11;
+  return [0, 2, 4].includes(num);
+}
+
+// Banks 31, 52
+const validateBank31_52 = (account) => {
+  const accountArray = account.split('').map(Number);
+  let num = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  let num1 = Number(accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  num = num % 11;
+  num1 = num1 % 11;
+  return num === 0 || num1 === 0 || num === 6 || num1 === 6;
+}
+
+// Bank 09
+const validateBank09 = (account) => {
+  const accountArray = account.split('').map(Number);
+  let num = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  num = num % 10;
+  return num === 0;
+}
+
+// Bank 22
+const validateBank22 = (account) => {
+  const accountArray = account.split('').map(Number);
+  let num = Number(accountArray[0] * 3 + accountArray[1] * 2 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2);
+  num = num % 11;
+  return (11 - num) === accountArray[8];
+}
+
+// Bank 46
+const validateBank46 = (bankBranch, account) => {
+  const accountArray = account.split('').map(Number);
+  const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
+  let num = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  let num1 = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  let num2 = Number(accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  num = num % 11;
+  num1 = num1 % 11;
+  num2 = num2 % 11;
+  const validBranches = ['154', '166', '178', '181', '183', '191', '192', '503', '505', '507', '515', '516', '527', '539'];
+  return num === 0 || (num === 2 && validBranches.includes(bankBranch)) || num1 === 0 || num2 === 0;
+}
+
+// Bank 14
+const validateBank14 = (bankBranch, account) => {
+  const accountArray = account.split('').map(Number);
+  const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
+  let num = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  let num1 = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  let num2 = Number(accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+  num = num % 11;
+  num1 = num1 % 11;
+  num2 = num2 % 11;
+  const validBranches1 = ['347', '361', '362', '363', '365', '385'];
+  const validBranches2 = ['361', '362', '363'];
+  return num === 0 || (num === 2 && validBranches1.includes(bankBranch)) || (num === 4 && validBranches2.includes(bankBranch)) || num1 === 0 || num2 === 0;
+}
+
+// Bank 15
+const validateBank15 = (accountNumber) => {
+  return true; // Assuming all account numbers are valid since no specific logic is provided.
+}
+
+// Bank 16
+const validateBank16 = (accountNumber) => {
+  const digits = accountNumber.split('').map(Number);
+  const multipliers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const sum = digits.reduce((acc, digit, index) => acc + digit * multipliers[index], 0);
+  return sum % 11 === 0;
+}
+
+// Bank 17
+const validateBank17 = (accountNumber) => {
+  const digits = accountNumber.split('').map(Number);
+  const multipliers = [9, 8, 6, 4, 3, 7, 2, 5];
+  const sum = digits.reduce((acc, digit, index) => acc + digit * multipliers[index], 0);
+  const remainder = sum % 11;
+  const checkDigit = 11 - remainder;
+  return digits[digits.length - 1] === checkDigit;
+}
+
+// Bank 18
+const validateBank18 = (bankBranch, accountNumber) => {
+  const branchPlusAccount = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
+  return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));
+}
+
+// Bank 19
+const validateBank19 = (bankBranch, accountNumber) => {
+  const branchPlusAccount = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
+  return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));
+}
+
+///////////////////////////////////////////////////////////////
+// Pad function for account numbers
+///////////////////////////////////////////////////////////////
 
 const pad = (str, max) => {
-    str = str.toString();
-    return str.length < max ? pad("0" + str, max): str;
+  str = str.toString();
+  return str.length < max ? pad("0" + str, max) : str;
 }
+
+///////////////////////////////////////////////////////////////
+// Initialize the validation logic when the document is ready
+///////////////////////////////////////////////////////////////
+
+initBankValidation();
