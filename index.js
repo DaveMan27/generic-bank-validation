@@ -183,7 +183,7 @@ const validateBank10_13_34 = (bankBranch, account) => {
 
   //Bank 23 - HSBC
 const validateBank23 = (bankBranch, account) => {
-  if (accountNumber.length !== 9) {
+  if (account.length !== 9) {
     return false;
   }
 
@@ -303,7 +303,7 @@ const validateBank14 = (bankBranch, account) => {
 }
 
 // Bank 54 - הבנק ההודי
-const validateBank54 = (accountNumber) => {
+const validateBank54 = (account) => {
   return true; // Assuming all account numbers are valid since no specific logic is provided.
 }
 
