@@ -181,7 +181,7 @@ const validateBank10_13_34 = (bankBranch, account) => {
   return ['90', '72', '70', '60', '20'].includes(num);
 }
 
-  //Bank 23 - HSBC
+    //Bank 23 - HSBC
 const validateBank23 = (bankBranch, account) => {
   if (account.length !== 9) {
     return false;
