@@ -396,12 +396,11 @@ const validateBank15 = (bankBranch, accountNumber) => {
 
   // Bank 35
 const validateBank35 = (bankBranch, accountNumber) => {
-  const branchPlusAccount = `${bankBranch}${accountNumber}`;
-    const mod97Result = parseInt(branchPlusAccount, 10) % 97;
-    const checkDigits = 98 - mod97Result;
-    const accountWithCheckDigits = `${checkDigits}${accountNumber}`;
-    const originalCheckDigits = parseInt(accountNumber.slice(-2), 10);
-    return checkDigits === originalCheckDigits; 
+  const  branchPlusAccount     = `${bankBranch}${accountNumber}`;
+  const  mod97Result           = parseInt(branchPlusAccount, 10) % 97;
+  const  checkDigits           = 98 - mod97Result;
+  const  originalCheckDigits   = Number(accountNumber.toString()[accountNumber.length-2] + accountNumber.toString()[accountNumber.length-2]);
+  return checkDigits         === originalCheckDigits;
 }
 
 
