@@ -137,7 +137,7 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
       break;
     case '31': 
     case '52': 
-      validateBankAccount = validateBank31_52(account);
+      validateBankAccount = validateBank31_52(account, bankBranch, bankNumber);
       break;
     case '09': 
       validateBankAccount = validateBank09(account);
@@ -297,13 +297,23 @@ const validateBank11_17 = (account) => {
 }
 
 // Banks 31, 52
-const validateBank31_52 = (account) => {
+const validateBank31_52 = (account, bankBranch, bankNumber) => {
+  debugger;
   const accountArray = account.split('').map(Number);
-  let num = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-  let num1 = Number(accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
-  num = num % 11;
-  num1 = num1 % 11;
-  return num === 0 || num1 === 0 || num === 6 || num1 === 6;
+  let   num          = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+        num          = num % 11;
+  if ([0, 6].includes(num)) {
+    return true;
+  } else {
+    let num1 = Number(accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
+        num1 = num1 % 11;
+    if ([0, 6].includes(num)) {
+      return true;
+    } else if (bankNumber == '31') {
+      return validateBank14(bankBranch, account);
+    }
+  }
+  
 }
 
 // Bank 09 - Bank HaDoar
