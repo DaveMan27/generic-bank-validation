@@ -348,13 +348,13 @@ const validateBank46 = (bankBranch, account) => {
 
 // Bank 14
 const validateBank14 = (bankBranch, account) => {
-  const accountArray    = account.split('').map(Number);
-  const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
-  let   num             = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);  num = num % 11;
-  num = num % 11;
-  const validBranches1 = ['347', '361', '362', '363', '365', '385'];
-  const validBranches2 = ['361', '362', '363'];
-  return num === 0 || (num === 2 && validBranches1.includes(bankBranch)) || (num === 4 && validBranches2.includes(bankBranch));
+  const  accountArray      = account.split('').map(Number);
+  const  bankbranchArray   = pad(bankBranch, 3).split('').map(Number);
+  let    num               = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);  num = num % 11;
+         num               = num % 11;
+  const  validBranches1    = ['347', '361', '362', '363', '365', '385'];
+  const  validBranches2    = ['361', '362', '363'];
+  return num             === 0 || (num === 2 && validBranches1.includes(bankBranch)) || (num === 4 && validBranches2.includes(bankBranch));
 }
 
 // Bank 54 - הבנק ההודי
