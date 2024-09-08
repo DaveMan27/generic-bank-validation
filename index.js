@@ -390,8 +390,8 @@ const validateBank18 = (bankBranch, accountNumber) => {
 
 // Bank 15 - אופק אגודת אשראי
 const validateBank15 = (bankBranch, accountNumber) => {
-  const branchPlusAccount = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
-  return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));
+  const  branchPlusAccount               = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
+  return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));  
 }
 
   // Bank 35
