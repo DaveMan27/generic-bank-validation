@@ -353,9 +353,9 @@ const validateBank14 = (bankBranch, account) => {
   return num             === 0 || (num === 2 && validBranches1.includes(bankBranch)) || (num === 4 && validBranches2.includes(bankBranch));
 }
 
-// Bank 54 - הבנק ההודי
+// Bank 54 - הבנק ירושלים
 const validateBank54 = (account) => {
-  return true; // Assuming all account numbers are valid since no specific logic is provided.
+  return true;  // Assuming all account numbers are valid since no specific logic is provided.
 }
 
 // Bank 03 - בנק אש
