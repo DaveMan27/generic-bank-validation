@@ -109,7 +109,6 @@ const getBankCode = (bankCodeTFA) => {
 
 const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
   let validateBankAccount = false;
-  debugger;
   switch (bankNumber) {
     case '10': 
     case '13':
@@ -173,12 +172,36 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
 ///////////////////////////////////////////////////////////////
 
 // Banks 10, 13, 34 - Leumi
-const validateBank10_13_34 = (bankBranch, account) => {
-  const accountArray = account.split('').map(Number);
-  const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
-  let num = String(Number(bankbranchArray[0] * 10 + bankbranchArray[1] * 9 + bankbranchArray[2] * 8 + accountArray[0] * 7 + accountArray[1] * 6 + accountArray[2] * 5 + accountArray[3] * 4 + accountArray[4] * 3 + accountArray[5] * 2) + Number(account.substr(account.length - 2)));
-  num = num.substr(num.length - 2);
-  return ['90', '72', '70', '60', '20'].includes(num);
+const validateBank10_13_34 = (branch, account) => {
+  const branchMultipliers  = [10, 9, 8];                 // Multipliers for the branch digits
+  const accountMultipliers = [7, 6, 5, 4, 3, 2];         // Multipliers for the account digits
+  const accountTypeCodes   = [330, 340, 110, 180, 128];  // Possible account type codes
+
+  const branchStr      = branch.toString().padStart(3, '0');  // Pad branch number to 3 digits
+  const accountStr     = account.toString().substring(0, 6);  // Pad account number to 6 digits
+  const finalDigitsStr = account.toString()[6] + account.toString()[7];
+  console.log(finalDigitsStr);
+  
+  let sum = 0;
+  for (let i = 0; i < branchStr.length; i++) {
+    sum += parseInt(branchStr[i]) * branchMultipliers[i];
+  }
+  for (let i = 0; i < accountStr.length; i++) {
+    sum += parseInt(accountStr[i]) * accountMultipliers[i];
+  }
+
+    // Iterate through each account type code
+  for (const accountTypeCode of accountTypeCodes) {
+    let totalSum = sum + accountTypeCode;    
+    let modResult = 100 - (totalSum % 100);
+    if (modResult.toString() === finalDigitsStr) {  // Adjust this condition to fit actual rule
+      console.log(`Valid with account type code: ${accountTypeCode}, MOD result: ${modResult}`);
+      return true;  // Return true as soon as we find a valid account
+    }
+  }
+    // If no valid account type code matches, return false
+  console.log("Invalid account");
+  return false;
 }
 
     //Bank 23 - HSBC
@@ -205,11 +228,10 @@ const validateBank23 = (bankBranch, account) => {
   }
 
 // If the branch code is neither 101 nor 102, or all checks passed
-  return true;
-  
+  return true;  
 }
 
-// Bank 12
+// Bank 12 - Bank HaPoalim
 const validateBank12 = (bankBranch, account) => {
   const accountArray = account.split('').map(Number);
   const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
@@ -273,7 +295,7 @@ const validateBank22 = (account) => {
   return (11 - num) === accountArray[8];
 }
 
-// Bank 46
+  // Bank 46
 const validateBank46 = (bankBranch, account) => {
   const accountArray = account.split('').map(Number);
   const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
