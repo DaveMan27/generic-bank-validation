@@ -366,17 +366,19 @@ const validateBank03 = (accountNumber) => {
   for (let i = 0; i < digits.length; i++) {
     sum += parseInt(digits[i]) * multipliers[i];
   }
-  console.log(sum);
   return sum % 11 === 0;
 }
 
 // Bank 47
 const validateBank47 = (accountNumber) => {
-  const digits = accountNumber.split('').map(Number);
+  const digits      = accountNumber.split('').map(Number);
   const multipliers = [9, 8, 6, 4, 3, 7, 2, 5];
-  const sum = digits.reduce((acc, digit, index) => acc + digit * multipliers[index], 0);
+  let   sum         = 0;
+  for (let i = 0; i < digits.length-1; i++) {
+    sum += parseInt(digits[i]) * multipliers[i];
+  }
   const remainder = sum % 11;
-  const checkDigit = 11 - remainder;
+  const  checkDigit                  = 11 - remainder;
   return digits[digits.length - 1] === checkDigit;
 }
 
