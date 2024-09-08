@@ -360,9 +360,13 @@ const validateBank54 = (account) => {
 
 // Bank 03 - בנק אש
 const validateBank03 = (accountNumber) => {
-  const digits = accountNumber.split('').map(Number);
-  const multipliers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  const sum = digits.reduce((acc, digit, index) => acc + digit * multipliers[index], 0);
+  const digits      = accountNumber.split('').map(Number);
+  const multipliers = [9, 8, 7, 6, 5, 4, 3, 2, 1];
+  let sum = 0;
+  for (let i = 0; i < digits.length; i++) {
+    sum += parseInt(digits[i]) * multipliers[i];
+  }
+  console.log(sum);
   return sum % 11 === 0;
 }
 
