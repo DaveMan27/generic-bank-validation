@@ -220,14 +220,14 @@ const validateBank23 = (bankBranch, account) => {
   const digits = account.split('').map(Number);
 
   // Validation for branch 101: The 7th digit (index 6) must be 4
-  if (bankBranch === 101) {
+  if (bankBranch.toString() === '101') {
       if (digits[6] !== 4) {
           return false;
       }
   }
 
 // Validation for branch 102: The account number must end with "001"
-  if (bankBranch === 102) {
+  if (bankBranch.toString() === '102') {
       if (!account.endsWith('001')) {
           return false;
       }
