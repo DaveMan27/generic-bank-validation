@@ -1,5 +1,3 @@
-  //TODO Coonect all the bank code numbers to the correct functions
-
 let bankDetails = {};
 
 // Initialization of bank validation
@@ -93,9 +91,9 @@ const validateBankDetails = () => {
   return response;
 }
 
-///////////////////////////////////////////////////////////////
-// Retrieves the bank code number from selection in dropdown
-///////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////
+  // Retrieves the bank code number from selection in dropdown
+  ///////////////////////////////////////////////////////////////
 
 const getBankCode = (bankCodeTFA) => {    
 	const selectedElement = $("#" + bankCodeTFA + " option:selected").text();
@@ -120,7 +118,7 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
       validateBankAccount = validateBank12(bankBranch, account); //Checked
       break;
     case '13': 
-      validateBankAccount = validateBank13(bankBranch, account); //Checked
+      validateBankAccount = validateBank13(bankBranch, account);  //Checked
       break;
     case '04': 
       validateBankAccount = validateBank04(bankBranch, account); //Checked
@@ -185,7 +183,7 @@ const validateBank10_34 = (bankBranch, account) => {
 
   const branchStr      = bankBranch.toString().padStart(3, '0');  // Pad branch number to 3 digits
   const accountStr     = account.toString().substring(0, 6);  // Pad account number to 6 digits
-  const finalDigitsStr = account.toString()[6] + account.toString()[7];
+  const finalDigitsStr = account.slice(-2);
   console.log(finalDigitsStr);
   
   let sum = 0;
