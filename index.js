@@ -1,54 +1,55 @@
 let bankDetails = {};
 let response    = {fields : {}};
 
-////////////////////////////////////////////////////////////
-//Call this function from external source - ie. FormAssembly
-////////////////////////////////////////////////////////////
+                                                                                                                        ////////////////////////////////////////////////////////////
+                                                                                                                        //Call this function from external source - ie. FormAssembly
+                                                                                                                        ////////////////////////////////////////////////////////////
 
 const initBankValidation = (bankCodeTFA, branchNumberTFA, accountNumberTFA) => {
   $(`#${bankCodeTFA}`).on('change', handleBankCode);		
 	$(`#${branchNumberTFA}`).on('change', handleBranchNumber);		
 	$(`#${accountNumberTFA}`).on('change', handleAccountNumber);
 
-
-	$(`#${bankCodeTFA}, #${branchNumberTFA}, #${accountNumberTFA}`).blur(function() {      
-    // Code to be executed when any of the specified elements lose focus
-  	try{
-			if (!isEmpty(bankDetails.bankCode) && !isEmpty(bankDetails.branchNumber) && !isEmpty(bankDetails.accountNumber)) {                                                                                                                                                                                                                                  
-				response.fields.status = true;
-				response.fields.message = 'All fields have been filled out.'                                                                                                                                                                         
-				const isValid = checkPrimaryAccount(bankDetails.bankCode, bankDetails.branchNumber, bankDetails.accountNumber);
-				console.log(`Bank validation check: ${isValid}`);
-				if (isValid) {
-					response.isValid = isValid;
-					response.bankDetails = bankDetails;
-					response.message = 'Bank details are valid.';
-				} else {
-					response.isValid = isValid;
-					response.bankDetails = bankDetails;
-					response.message = 'Bank details are not valid. Please check and try again.'
-				}
-			} else {
-				response.fields.status = false;
-				response.bankDetails = bankDetails;
-				response.fields.message = 'Make sure to complete all the fields';
-			}
-		} catch (error){		
-			response.message = error.message;
-		}
-		console.log(response);
-  	return response;
-    
-  })
+  $(`#${bankCodeTFA}, #${branchNumberTFA}, #${accountNumberTFA}`).blur(validateBankDetails);
 
 }
 
-/////////////////////////////////////////////////////////////
-//Handles the input of each field
-/////////////////////////////////////////////////////////////
+const validateBankDetails = () => {      
+                                                                                                                          // Code to be executed when any of the specified elements lose focus
+  try{
+    if (!isEmpty(bankDetails.bankCode) && !isEmpty(bankDetails.branchNumber) && !isEmpty(bankDetails.accountNumber)) {                                                                                                                                                                                                                                  
+            response.fields.status  = true;
+            response.fields.message = 'All fields have been filled out.'
+      const isValid                 = checkPrimaryAccount(bankDetails.bankCode, bankDetails.branchNumber, bankDetails.accountNumber);
+      console.log(`Bank validation check: ${isValid}`);
+      if (isValid) {
+        response.isValid     = isValid;
+        response.bankDetails = bankDetails;
+        response.message     = 'Bank details are valid.';
+      } else {
+        response.isValid     = isValid;
+        response.bankDetails = bankDetails;
+        response.message     = 'Bank details are not valid. Please check and try again.'
+      }
+    } else {
+      response.fields.status  = false;
+      response.bankDetails    = bankDetails;
+      response.fields.message = 'Make sure to complete all the fields';
+    }
+  } catch (error){		
+    response.message = error.message;
+  }
+  console.log(response);
+  return response;
+  
+}
+
+                                                                                                                        /////////////////////////////////////////////////////////////
+                                                                                                                        //Handles the input of each field
+                                                                                                                        /////////////////////////////////////////////////////////////
 
 const handleBankCode = (input) => {
-	bankCode = getBankCode(input.target.id);
+	bankCode             = getBankCode(input.target.id);
 	bankDetails.bankCode = bankCode;
 }
 
@@ -63,34 +64,34 @@ const handleAccountNumber = (input) => {
 	console.log(bankDetails);
 }
 
-///////////////////////////////////////////////////////////////
-// Retrieves the bank code number from selection in dropdown
-///////////////////////////////////////////////////////////////
+                                                                                                                        ///////////////////////////////////////////////////////////////
+                                                                                                                        // Retrieves the bank code number from selection in dropdown
+                                                                                                                        ///////////////////////////////////////////////////////////////
 
 const getBankCode= (bankCodeTFA) => {    
-		const selectedElement = $("#" + bankCodeTFA + " option:selected").text()
-    const bankCode       = selectedElement.split(' ')[0];
+  const selectedElement = $("#" + bankCodeTFA + " option:selected").text()
+  const bankCode        = selectedElement.split(' ')[0];
   	console.log(bankCode);
     return bankCode.length === 1 ? '0' + bankCode : bankCode;
 }
 
-//////////////////////////////////////
-//Check if fields are empty
-/////////////////////////////////////
+                                                                                                                        //////////////////////////////////////
+                                                                                                                        //Check if fields are empty
+                                                                                                                        /////////////////////////////////////
 
 const isEmpty = (input) => {
-// Check for empty string, null, or undefined
+                                                                                                                        // Check for empty string, null, or undefined
 	if (input === '' || input === null || input === undefined || input === 'נא') {
     return true;
   }
 	
     
-// Convert to a string and trim whitespace to check for inputs that only contain spaces
+                                                                                                                        // Convert to a string and trim whitespace to check for inputs that only contain spaces
   if (String(input).trim() === '') {
     return true;
 	}
     
-// Optionally, check if the input is a number and not NaN (Not-a-Number), which is a special value representing an undefined or unrepresentable value in JavaScript
+                                                                                                                        // Optionally, check if the input is a number and not NaN (Not-a-Number), which is a special value representing an undefined or unrepresentable value in JavaScript
   if (typeof input === 'number'&& isNaN(input)) {
     return true;
   }	
@@ -99,9 +100,9 @@ const isEmpty = (input) => {
 }
 
 
-///////////////////////////////////////////////////////////////
-//Bank validation function
-///////////////////////////////////////////////////////////////
+                                                                                                                        ///////////////////////////////////////////////////////////////
+                                                                                                                        //Bank validation function
+                                                                                                                        ///////////////////////////////////////////////////////////////
 const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
   let validateBankAccount = false;
   switch (bankNumber) {
@@ -168,22 +169,22 @@ const checkPrimaryAccount = (bankNumber, bankBranch, account) => {
   return validateBankAccount;
 }
 
-                                      ///////////////////////////////////////////////////////////////
-                                      // Bank-specific validation functions
-                                      ///////////////////////////////////////////////////////////////
+                                                                                                                                                              ///////////////////////////////////////////////////////////////
+                                                                                                                                                              // Bank-specific validation functions
+                                                                                                                                                              ///////////////////////////////////////////////////////////////
 
-                                      // Banks 10, 13, 34 - Leumi
+                                                                                                                                                              // Banks 10, 13, 34 - Leumi
 const validateBank10_34 = (bankBranch, account) => {
   const branchMultipliers  = [10, 9, 8];                 // Multipliers for the branch digits
   const accountMultipliers = [7, 6, 5, 4, 3, 2];         // Multipliers for the account digits
   const accountTypeCodes   = [110, 330, 340, 180, 128];  // Possible account type codes
-  let   accountStr         = pad(account, 8);  
+  let   accountStr         = pad(account, 8);
   console.log('Acc string', accountStr);
   const branchStr  = bankBranch.toString().padStart(3, '0');  // Pad branch number to 3 digits
-        accountStr = accountStr.toString().substring(0, 6);      // Pad account number to 6 digits
+        accountStr = accountStr.toString().substring(0, 6);   // Pad account number to 6 digits
   
-  const finalDigitsStr = account.slice(-2);  
-  let sum = 0;
+  const finalDigitsStr = account.slice(-2);
+  let   sum            = 0;
   for (let i = 0; i < branchStr.length; i++) {
     sum += parseInt(branchStr[i]) * branchMultipliers[i];
   }
@@ -191,12 +192,12 @@ const validateBank10_34 = (bankBranch, account) => {
     sum += parseInt(accountStr[i]) * accountMultipliers[i];
   }
 
-  // Iterate through each account type code
+                                                                                                                          // Iterate through each account type code
   for (const accountTypeCode of accountTypeCodes) {
     if (accountTypeCode == 110 && !(['20', '23', '00'].includes(finalDigitsStr))) {
       continue;
     };    
-    let totalSum = sum + accountTypeCode;
+    let totalSum  = sum + accountTypeCode;
     let modResult = 100 - (totalSum % 100);
     console.log('Mod', modResult);
     if (modResult == finalDigitsStr) {  // Adjust this condition to fit actual rule
@@ -204,41 +205,41 @@ const validateBank10_34 = (bankBranch, account) => {
       return true;  // Return true as soon as we find a valid account
     }
   }
-                                          // If no valid account type code matches, return false
+                                                                                                                                                                  // If no valid account type code matches, return false
   console.log("Invalid account");
   return false;
 }
 
-                                          //Bank 23 - HSBC
+                                                                                                                                                                  //Bank 23 - HSBC
 const validateBank23 = (bankBranch, account) => {
   if (account.length !== 9) {
     return false;
   }
 
-                                      // Convert the account number to an array of digits
+                                                                                                                                                              // Convert the account number to an array of digits
   const digits = account.split('').map(Number);
 
-                                        // Validation for branch 101: The 7th digit (index 6) must be 4
+                                                                                                                                                                // Validation for branch 101: The 7th digit (index 6) must be 4
   if (bankBranch.toString() === '101') {
       if (digits[6] !== 4) {
           return false;
       }
   }
 
-  /* Validation for branch 102: The account number must end with "001"*/
+                                                                                                                          /* Validation for branch 102: The account number must end with "001"*/
   if (bankBranch.toString() === '102') {
       if (!account.endsWith('001')) {
           return false;
       }
   }
 
-  // If the branch code is neither 101 nor 102, or all checks passed
+                                                                                                                          // If the branch code is neither 101 nor 102, or all checks passed
   return true;  
 }
 
-                                      // Bank 12 - Bank HaPoalim
+                                                                                                                                                              // Bank 12 - Bank HaPoalim
 const validateBank12 = (bankBranch, account) => {
-  account = pad(account, 6);
+        account         = pad(account, 6);
   const accountArray    = account.split('').map(Number);
   const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
   let   num             = Number(bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1);
@@ -248,8 +249,8 @@ const validateBank12 = (bankBranch, account) => {
 }
 
 const validateBank13 = (bankBranch, account) => {
-  account = pad(account, 8);
-  const branchMultipliers = [10, 9, 8];                              // Multipliers for the branch digits
+        account            = pad(account, 8);
+  const branchMultipliers  = [10, 9, 8];                              // Multipliers for the branch digits
   const accountMultipliers = [7, 6, 5, 4, 3, 2];
   const branchStr          = bankBranch.toString().padStart(3, '0');  // Pad branch number to 3 digits
   const accountStr         = account.toString().substring(0, 6);      // Pad account number to 6 digits
@@ -268,7 +269,7 @@ const validateBank13 = (bankBranch, account) => {
   return [70, 72, 90, 20, 60].includes(num);
 }
 
-                                      // Bank 04
+                                                                                                                                                              // Bank 04
 const validateBank04 = (bankBranch, account) => {
          account           = pad(account, 6);
   const  accountArray      = account.split('').map(Number);
@@ -278,7 +279,7 @@ const validateBank04 = (bankBranch, account) => {
   return num             === 0 || num === 2;
 }
 
-                                    // Bank 20
+                                                                                                                                                            // Bank 20
 const validateBank20 = (bankBranch, account) => {
   account = pad(account, 6);
   if (bankBranch > 400 && bankBranch < 800) {
@@ -291,18 +292,18 @@ const validateBank20 = (bankBranch, account) => {
   return [0, 2, 4].includes(num);
 }
 
-                                    // Banks 11, 17
+                                                                                                                                                            // Banks 11, 17
 const validateBank11_17 = (account) => {
-  const acc = pad(account, 9);
+  const acc          = pad(account, 9);
   const accountArray = acc.split('').map(Number);
   let   num          = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
         num          = num % 11;
   return [0, 2, 4].includes(num);
 }
 
-                                    // Banks 31, 52
+                                                                                                                                                            // Banks 31, 52
 const validateBank31_52 = (bankBranch, account, bankNumber) => {
-  account = pad(account, 9);
+        account      = pad(account, 9);
   const accountArray = account.split('').map(Number);
   let   num          = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
         num          = num % 11;
@@ -320,7 +321,7 @@ const validateBank31_52 = (bankBranch, account, bankNumber) => {
   
 }
 
-// Bank 09 - Bank HaDoar
+                                                                                                                        // Bank 09 - Bank HaDoar
 const validateBank09 = (account) => {
          account        = pad(account, 9);
   const  accountArray   = account.split('').map(Number);
@@ -329,7 +330,7 @@ const validateBank09 = (account) => {
   return num          === 0;
 }
 
-                                    // Bank 22 - Citibank
+                                                                                                                                                            // Bank 22 - Citibank
 const validateBank22 = (account) => {
   const accountArray   = account.split('').map(Number);
   let   num            = Number(accountArray[0] * 3 + accountArray[1] * 2 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2);
@@ -337,7 +338,7 @@ const validateBank22 = (account) => {
   return (11 - num)  === accountArray[8];
 }
 
-                                      // Bank 46
+                                                                                                                                                              // Bank 46
 const validateBank46 = (bankBranch, account) => {
         account         = pad(account, 6);
   const accountArray    = account.split('').map(Number);
@@ -359,39 +360,39 @@ const validateBank14 = (bankBranch, account) => {
   const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
   let   sum             = bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1;
   let   num             = sum % 11;
-  const validBranches1 = ['347', '365', '384', '385'];
-  const validBranches2    = ['361', '362', '363'];
+  const validBranches1  = ['347', '365', '384', '385'];
+  const validBranches2  = ['361', '362', '363'];
 
   if (validBranches1.includes(bankBranch)) {
     return num === 0 || num === 2;
   } else if (validBranches2.includes(bankBranch)) {
-    return num === 0 || num === 2 || num === 4;
-  } else return num === 0;  
+  return num             === 0 || num === 2 || num === 4;
+  }      else return num === 0;
 }
 
-                                    // Bank 54 - הבנק ירושלים
+                                                                                                                                                            // Bank 54 - הבנק ירושלים
 const validateBank54 = (account) => {
   return true;  // Assuming all account numbers are valid since no specific logic is provided.
 }
 
-                                    // Bank 03 - בנק אש
+                                                                                                                                                            // Bank 03 - בנק אש
 const validateBank03 = (accountNumber) => {
-  accountNumber = pad(accountNumber, 9);
-  const digits = accountNumber.split('').map(Number);
-  const multipliers = [9, 8, 7, 6, 5, 4, 3, 2, 1];
-  let   sum         = 0;
+        accountNumber = pad(accountNumber, 9);
+  const digits        = accountNumber.split('').map(Number);
+  const multipliers   = [9, 8, 7, 6, 5, 4, 3, 2, 1];
+  let   sum           = 0;
   for (let i = 0; i < digits.length; i++) {
     sum += parseInt(digits[i]) * multipliers[i];
   }
   return sum % 11 === 0;
 }
 
-                                    // Bank 47
+                                                                                                                                                            // Bank 47
 const validateBank47 = (accountNumber) => {
-  accountNumber = pad(accountNumber, 9);
-  const digits = accountNumber.split('').map(Number);
-  const multipliers = [9, 8, 6, 4, 3, 7, 2, 5];
-  let   sum         = 0;
+        accountNumber = pad(accountNumber, 9);
+  const digits        = accountNumber.split('').map(Number);
+  const multipliers   = [9, 8, 6, 4, 3, 7, 2, 5];
+  let   sum           = 0;
   for (let i = 0; i < digits.length-1; i++) {
     sum += parseInt(digits[i]) * multipliers[i];
   }
@@ -400,28 +401,28 @@ const validateBank47 = (accountNumber) => {
   return digits[digits.length - 1] === checkDigit;
 }
 
-                                    // Bank 18 - One Zero
+                                                                                                                                                            // Bank 18 - One Zero
 const validateBank18 = (bankBranch, accountNumber) => {
-  accountNumber = pad(accountNumber, 9);
-  bankBranch = pad(bankBranch, 3);
-  const branchPlusAccount = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
+         accountNumber                   = pad(accountNumber, 9);
+         bankBranch                      = pad(bankBranch, 3);
+  const  branchPlusAccount               = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
   return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));
 }
 
-                                    // Bank 15 - אופק אגודת אשראי
+                                                                                                                                                            // Bank 15 - אופק אגודת אשראי
 const validateBank15 = (bankBranch, accountNumber) => {
   const branchPlusAccount = `${Number(bankBranch)}${accountNumber.slice(0, -2)}`
   Number(branchPlusAccount);
   return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));
 }
 
-                                      // Bank 35
+                                                                                                                                                              // Bank 35
 const validateBank35 = (bankBranch, accountNumber) => {
-  //accountNumber = pad(accountNumber, 8);
-  const branchPlusAccount = `${bankBranch}${accountNumber.slice(0, -2)}`;
+                                                                                                                          //accountNumber = pad(accountNumber, 8);
+  const  branchPlusAccount     = `${bankBranch}${accountNumber.slice(0, -2)}`;
   const  mod97Result           = parseInt(branchPlusAccount, 10) % 97;
   const  checkDigits           = 98 - mod97Result;
-  const originalCheckDigits = Number(accountNumber.slice(-2));
+  const  originalCheckDigits   = Number(accountNumber.slice(-2));
   return checkDigits         === originalCheckDigits;
 }
 
