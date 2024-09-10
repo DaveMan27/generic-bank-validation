@@ -345,17 +345,20 @@ const validateBank46 = (bankBranch, account) => {
   return num             === 0 || (num === 2 && validBranches.includes(bankBranch)) || (num === 0 && validBranches.includes(bankBranch));
 }
 
-/*TODO Fix up line 358 */
-
 const validateBank14 = (bankBranch, account) => {
-  account = pad(account, 6);
-  const accountArray = account.split('').map(Number);
-  const  bankbranchArray   = pad(bankBranch, 3).split('').map(Number);
-  let    sum               = bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1;
-  let    num               = sum % 11;
-  const  validBranches1    = ['347', '361', '362', '363', '365', '385'];
-  const  validBranches2    = ['361', '362', '363'];
-  return num             === 0 || (num === 2 && validBranches1.includes(bankBranch)) || (num === 4 && validBranches2.includes(bankBranch));
+        account         = pad(account, 6);
+  const accountArray    = account.split('').map(Number);
+  const bankbranchArray = pad(bankBranch, 3).split('').map(Number);
+  let   sum             = bankbranchArray[0] * 9 + bankbranchArray[1] * 8 + bankbranchArray[2] * 7 + accountArray[0] * 6 + accountArray[1] * 5 + accountArray[2] * 4 + accountArray[3] * 3 + accountArray[4] * 2 + accountArray[5] * 1;
+  let   num             = sum % 11;
+  const validBranches1 = ['347', '365', '384', '385'];
+  const validBranches2    = ['361', '362', '363'];
+
+  if (validBranches1.includes(bankBranch)) {
+    return num === 0 || num === 2;
+  } else if (validBranches2.includes(bankBranch)) {
+    return num === 0 || num === 2 || num === 4;
+  } else return num === 0;  
 }
 
                                     // Bank 54 - הבנק ירושלים
