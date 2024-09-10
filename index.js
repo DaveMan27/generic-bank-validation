@@ -399,7 +399,9 @@ const validateBank47 = (accountNumber) => {
 
                                     // Bank 18 - One Zero
 const validateBank18 = (bankBranch, accountNumber) => {
-  const  branchPlusAccount               = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
+  accountNumber = pad(accountNumber, 9);
+  bankBranch = pad(bankBranch, 3);
+  const branchPlusAccount = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
   return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));
 }
 
