@@ -375,7 +375,8 @@ const validateBank54 = (account) => {
 
                                     // Bank 03 - בנק אש
 const validateBank03 = (accountNumber) => {
-  const digits      = accountNumber.split('').map(Number);
+  accountNumber = pad(accountNumber, 9);
+  const digits = accountNumber.split('').map(Number);
   const multipliers = [9, 8, 7, 6, 5, 4, 3, 2, 1];
   let   sum         = 0;
   for (let i = 0; i < digits.length; i++) {
@@ -386,7 +387,8 @@ const validateBank03 = (accountNumber) => {
 
                                     // Bank 47
 const validateBank47 = (accountNumber) => {
-  const digits      = accountNumber.split('').map(Number);
+  accountNumber = pad(accountNumber, 9);
+  const digits = accountNumber.split('').map(Number);
   const multipliers = [9, 8, 6, 4, 3, 7, 2, 5];
   let   sum         = 0;
   for (let i = 0; i < digits.length-1; i++) {
@@ -407,16 +409,18 @@ const validateBank18 = (bankBranch, accountNumber) => {
 
                                     // Bank 15 - אופק אגודת אשראי
 const validateBank15 = (bankBranch, accountNumber) => {
-  const  branchPlusAccount               = parseInt(bankBranch).toString() + accountNumber.substring(0, 7);
+  const branchPlusAccount = `${Number(bankBranch)}${accountNumber.slice(0, -2)}`
+  Number(branchPlusAccount);
   return 98 - (branchPlusAccount % 97) === parseInt(accountNumber.slice(-2));
 }
 
                                       // Bank 35
 const validateBank35 = (bankBranch, accountNumber) => {
-  const  branchPlusAccount     = `${bankBranch}${accountNumber}`;
+  //accountNumber = pad(accountNumber, 8);
+  const branchPlusAccount = `${bankBranch}${accountNumber.slice(0, -2)}`;
   const  mod97Result           = parseInt(branchPlusAccount, 10) % 97;
   const  checkDigits           = 98 - mod97Result;
-  const  originalCheckDigits   = Number(accountNumber.toString()[accountNumber.length-2] + accountNumber.toString()[accountNumber.length-2]);
+  const originalCheckDigits = Number(accountNumber.slice(-2));
   return checkDigits         === originalCheckDigits;
 }
 
