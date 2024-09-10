@@ -319,8 +319,9 @@ const validateBank31_52 = (bankBranch, account, bankNumber) => {
   
 }
 
-                                    // Bank 09 - Bank HaDoar
+// Bank 09 - Bank HaDoar
 const validateBank09 = (account) => {
+         account        = pad(account, 9);
   const  accountArray   = account.split('').map(Number);
   let    num            = Number(accountArray[0] * 9 + accountArray[1] * 8 + accountArray[2] * 7 + accountArray[3] * 6 + accountArray[4] * 5 + accountArray[5] * 4 + accountArray[6] * 3 + accountArray[7] * 2 + accountArray[8] * 1);
          num            = num % 10;
